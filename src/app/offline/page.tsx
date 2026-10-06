@@ -2,23 +2,18 @@ import Link from "next/link";
 
 export default function OfflinePage() {
   return (
-    <main className="orderPage">
-      <div className="orderWrap">
-        <div className="orderHeader">
-          <Link href="/" className="logo"><span className="logoMark">B</span><span>BOEMO</span></Link>
-        </div>
-        <section className="orderCard confirm">
-          <div className="confirmIcon">📶</div>
-          <span className="kicker">Offline mode</span>
-          <h1>BOEMO is still here.</h1>
-          <p>The BOEMO app shell and previously loaded public pages can remain available on this device while your connection is away.</p>
-          <p>Firestore can keep an eligible order write locally and synchronize it later, but the kitchen has not received an offline order until Firebase confirms synchronization.</p>
-          <div className="actions centered">
-            <Link className="button buttonPrimary" href="/order">Open Order</Link>
-            <Link className="button buttonLight" href="/">Open BOEMO</Link>
+    <main className="wallSite">
+      <section className="wallHero" style={{ minHeight: "100vh", display: "grid", alignItems: "center" }}>
+        <div className="wallContainer">
+          <p className="wallEyebrow">THE WALL · OFFLINE</p>
+          <h1 style={{ maxWidth: 900 }}>YOU'RE<br /><em>OFF THE GRID.</em></h1>
+          <p className="wallLead">The Wall can keep its public shell available on this device while your connection is away. Anything that needs the live network will wait until you reconnect.</p>
+          <div className="wallActions">
+            <Link href="/" className="wallButton wallButtonPrimary">Back to The Wall →</Link>
+            <Link href="/events" className="wallButton wallButtonSecondary">Try Events →</Link>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </main>
   );
 }
