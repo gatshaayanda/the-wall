@@ -2,23 +2,27 @@ import Link from "next/link";
 
 export default function OfflinePage() {
   return (
-    <main className="orderPage">
-      <div className="orderWrap">
-        <div className="orderHeader">
-          <Link href="/" className="logo"><span className="logoMark">B</span><span>BOEMO</span></Link>
+    <main className="wallSite">
+      <section className="wallPageHero">
+        <div className="wallContainer">
+          <p className="wallEyebrow">THE WALL · OFFLINE</p>
+          <h1>Still here.</h1>
+          <p>The public shell can remain available on this device where content has already been cached. Live information still needs a connection.</p>
         </div>
-        <section className="orderCard confirm">
-          <div className="confirmIcon">📶</div>
-          <span className="kicker">Offline mode</span>
-          <h1>BOEMO is still here.</h1>
-          <p>The BOEMO app shell and previously loaded public pages can remain available on this device while your connection is away.</p>
-          <p>Firestore can keep an eligible order write locally and synchronize it later, but the kitchen has not received an offline order until Firebase confirms synchronization.</p>
-          <div className="actions centered">
-            <Link className="button buttonPrimary" href="/order">Open Order</Link>
-            <Link className="button buttonLight" href="/">Open BOEMO</Link>
+      </section>
+      <section className="wallPageBody">
+        <div className="wallContainer">
+          <div className="wallEmpty">
+            <p className="wallEyebrow">CONNECTION LOST</p>
+            <h2>We&apos;ll reconnect when you do.</h2>
+            <p>Cached public pages may still open. Private activity, new applications and other backend actions are not treated as confirmed until the Wall backend responds.</p>
+            <div className="wallActions">
+              <Link className="wallButton wallButtonPrimary" href="/">Back to The Wall →</Link>
+              <Link className="wallButton wallButtonSecondary" href="/discover">Explore cached Discover →</Link>
+            </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </main>
   );
 }
