@@ -444,7 +444,7 @@ The repository was created by pushing the BOEMO technical foundation into gatsha
 
 The initial remote checkpoint was deliberately kept as the known BOEMO foundation before product conversion.
 
-Current phase: FOUNDATION CONVERSION.
+Current phase: FOUNDATION CONVERSION → PUBLIC SHELL / INFORMATION ARCHITECTURE.
 
 Immediate priority:
 1. establish THE WALL identity and operating contract
@@ -453,6 +453,16 @@ Immediate priority:
 4. establish THE WALL information architecture
 5. build the public Wall shell before deep CRUD
 6. build the domain model and Wall Control around the relationships above
+
+Latest controlled conversion checkpoint:
+- THE WALL visual system now uses paper/ink/red/gold tokens rather than the inherited BOEMO neon install/notification treatment.
+- PWA install/update/offline surfaces now use THE WALL styling and identity.
+- Public routes now exist for Events, Discover, Market, Opportunities, Become a Vendor, My Wall and the detail-route shells for events, businesses, products and opportunities.
+- Retired BOEMO public order/account/book routes, BOEMO notification API routes, BOEMO media and BOEMO helper files have been removed from the active tree.
+- Wall Control now has a deliberate THE WALL operator shell rather than exposing the old kitchen dashboard; its real CRUD/data model remains to be built.
+- No live Great Wall catalogue, event schedule, vendor list or opportunity has been fabricated.
+- package-lock.json still needs a local regeneration/check against package.json before the next production checkpoint.
+- Vercel deployment remains unverified; do not describe the current branch as deployed/READY.
 
 Do not stop at a renamed BOEMO website.
 
