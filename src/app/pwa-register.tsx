@@ -7,6 +7,8 @@ type InstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 };
 
+const DISMISS_KEY = "the-wall-install-dismissed";
+
 export default function PwaRegister() {
   const [offline, setOffline] = useState(false);
   const [reconnecting, setReconnecting] = useState(false);
@@ -15,7 +17,10 @@ export default function PwaRegister() {
   const reloadForUpdate = useRef(false);
 
   useEffect(() => {
+    const installed = window.matchMedia("(display-mode: standalone)").matches || window.matchMedia("(display-mode: fullscreen)").matches;
+    const dismissed = window.localStorage.getItem(DISMISS_KEY) === "1";
     setOffline(!navigator.onLine);
+
     const online = () => {
       setOffline(false);
       setReconnecting(true);
@@ -26,6 +31,7 @@ export default function PwaRegister() {
       setOffline(true);
     };
     const install = (event: Event) => {
+      if (installed || dismissed) return;
       event.preventDefault();
       setInstallPrompt(event as InstallPromptEvent);
     };
@@ -55,15 +61,18 @@ export default function PwaRegister() {
 
     void register();
 
+    const installedNow = () => setInstallPrompt(null);
     const controllerChange = () => {
       if (reloadForUpdate.current) window.location.reload();
     };
+    window.addEventListener("appinstalled", installedNow);
     navigator.serviceWorker?.addEventListener("controllerchange", controllerChange);
 
     return () => {
       window.removeEventListener("online", online);
       window.removeEventListener("offline", off);
       window.removeEventListener("beforeinstallprompt", install);
+      window.removeEventListener("appinstalled", installedNow);
       navigator.serviceWorker?.removeEventListener("controllerchange", controllerChange);
     };
   }, []);
@@ -71,7 +80,8 @@ export default function PwaRegister() {
   async function install() {
     if (!installPrompt) return;
     await installPrompt.prompt();
-    await installPrompt.userChoice;
+    const choice = await installPrompt.userChoice;
+    if (choice.outcome === "dismissed") window.localStorage.setItem(DISMISS_KEY, "1");
     setInstallPrompt(null);
   }
 
@@ -83,10 +93,19 @@ export default function PwaRegister() {
 
   return (
     <>
-      {offline && <div className="offlineBanner" role="status" aria-live="polite">Offline · THE WALL is available on this device where cached content exists.</div>}
+      {offline && <div className="offlineBanner" role="status" aria-live="polite">Offline · cached public parts of THE WALL may still be available.</div>}
       {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite">Reconnected · THE WALL is checking for the latest information.</div>}
-      {installPrompt && <button className="pwaInstall" type="button" onClick={() => void install()}>Install THE WALL</button>}
-      {updateReady && <div className="pwaUpdate" role="status" aria-live="polite"><div><strong>THE WALL update ready</strong><span>Refresh when you are ready.</span></div><button type="button" className="wallButton wallButtonPrimary" onClick={applyUpdate}>Refresh</button></div>}
+      {installPrompt && (
+        <button className="pwaInstall" type="button" onClick={() => void install()} aria-label="Install The Wall">
+          Install THE WALL
+        </button>
+      )}
+      {updateReady && (
+        <div className="pwaUpdate" role="status" aria-live="polite">
+          <div><strong>THE WALL has an update.</strong><span>Refresh when you are ready.</span></div>
+          <button type="button" className="wallButton wallButtonPrimary" onClick={applyUpdate}>Refresh</button>
+        </div>
+      )}
     </>
   );
 }
