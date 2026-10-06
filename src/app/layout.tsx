@@ -10,19 +10,41 @@ const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://the-wall-ab746.verc
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: "THE WALL", template: "%s | THE WALL" },
-  description: "A digital ecosystem for Great Wall — experiences, businesses, products and opportunities.",
+  description: "The digital front door to Great Wall — experiences, businesses, products and opportunities.",
   applicationName: "THE WALL",
   keywords: ["The Wall", "Great Wall", "Molepolole", "Botswana", "events", "businesses", "market", "opportunities"],
   alternates: { canonical: "/" },
-  openGraph: { type: "website", url: siteUrl, siteName: "THE WALL", title: "THE WALL", description: "Experiences, businesses, products and opportunities at Great Wall." },
-  twitter: { card: "summary", title: "THE WALL", description: "Experiences, businesses, products and opportunities at Great Wall." },
+  openGraph: {
+    type: "website",
+    url: siteUrl,
+    siteName: "THE WALL",
+    title: "THE WALL",
+    description: "Experiences, businesses, products and opportunities at Great Wall.",
+  },
+  twitter: {
+    card: "summary",
+    title: "THE WALL",
+    description: "Experiences, businesses, products and opportunities at Great Wall.",
+  },
   icons: { icon: "/icon.svg", apple: "/icon.svg" },
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "THE WALL", statusBarStyle: "black-translucent" },
 };
 
-export const viewport: Viewport = { themeColor: "#111111", colorScheme: "dark" };
+export const viewport: Viewport = {
+  themeColor: "#F4F0E7",
+  colorScheme: "light",
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en"><body><PwaRegister />{children}<Analytics /><SpeedInsights /></body></html>;
+  return (
+    <html lang="en">
+      <body>
+        <PwaRegister />
+        {children}
+        <Analytics />
+        <SpeedInsights />
+      </body>
+    </html>
+  );
 }
