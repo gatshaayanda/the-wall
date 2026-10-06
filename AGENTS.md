@@ -509,3 +509,35 @@ Then continue from reality.
 If reality differs from this document:
 
 STOP → inspect → reconcile the contract → continue.
+
+
+## Content population checkpoint — 2026-10-06
+
+The Wall now has a deliberately labelled demo-content layer so the information architecture can be exercised before real Great Wall content is supplied.
+
+Collections currently surfaced publicly:
+- businesses
+- events
+- products
+- opportunities
+
+Demo records are fictional and visibly marked as DEMO. They are not claims about current Great Wall vendors, prices, schedules, availability or opportunities.
+
+### Wall Control CRUD
+- /admin is now an operator workspace for creating, editing, publishing, archiving and deleting records in those four collections.
+- The operator boundary currently uses an HTTP-only signed session derived from WALL_ADMIN_PASSWORD because Firebase Auth client/admin integration was not present in the converted shell. This is an explicit temporary operator boundary, not a public role claim.
+- Firebase Admin SDK is server-only and reads/writes Firestore without exposing service credentials to the browser.
+- scripts/seed-wall-demo.mjs seeds the fictional dataset.
+- scripts/set-wall-admin.mjs remains available for the later Firebase custom-claim migration; it is not required by the current passphrase gate.
+- Public pages read published Firestore content server-side and fall back to the clearly labelled fictional dataset when backend configuration/content is unavailable.
+
+### Security/content rules
+- Firestore rules remain deny-by-default. The current public pages do not use the browser Firestore client; server-side Admin SDK access is used for this prototype boundary.
+- Never seed real businesses, live event details, prices, performers or availability as demo content.
+- Before production content is opened directly to browser clients, replace the temporary server-only boundary with deliberate Firebase Auth/custom-claim rules and test the rules against the public/private access model.
+
+### Accessibility / visual correction
+The shared secondary button style previously used light text on light public-page backgrounds because it was designed for the dark hero. The public-page override now uses ink text and an ink border on paper backgrounds. This keeps the reusable CTA readable and follows the WCAG contrast intent.
+
+### Current next step
+Use the populated shell to test the information architecture and relationships. Then replace the demo records with real operator-managed entities, add detail routes and relationship fields, and only then open the corresponding Firestore client permissions.
