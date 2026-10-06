@@ -1,27 +1,62 @@
 import "server-only";
 
-import { wallAdminAuth, wallAdminDb } from "@/lib/firebase-admin";
+import crypto from "node:crypto";
+import { cookies } from "next/headers";
+import { wallAdminDb } from "@/lib/firebase-admin";
 import type { WallCollection, WallRecord } from "@/lib/wall-demo";
 
 const COLLECTIONS = new Set<WallCollection>(["businesses", "events", "products", "opportunities"]);
+const COOKIE = "the-wall-admin-session";
 
 export function isWallCollection(value: string): value is WallCollection {
   return COLLECTIONS.has(value as WallCollection);
 }
 
-export async function requireWallAdmin(request: Request) {
-  const header = request.headers.get("authorization");
-  const token = header?.replace(/^Bearer\s+/i, "");
-  if (!token) throw new Error("UNAUTHENTICATED");
+function secret() {
+  const value = process.env.WALL_ADMIN_PASSWORD;
+  if (!value) throw new Error("WALL_ADMIN_PASSWORD is not configured.");
+  return value;
+}
 
-  const decoded = await wallAdminAuth.verifyIdToken(token);
-  const allowlisted = (process.env.WALL_ADMIN_EMAILS ?? "")
-    .split(",").map((email) => email.trim().toLowerCase()).filter(Boolean);
+function sign(payload: string) {
+  return crypto.createHmac("sha256", secret()).update(payload).digest("hex");
+}
 
-  if (decoded.admin !== true && (!decoded.email || !allowlisted.includes(decoded.email.toLowerCase()))) {
-    throw new Error("FORBIDDEN");
-  }
-  return decoded;
+function makeSession() {
+  const payload = String(Date.now());
+  return payload + "." + sign(payload);
+}
+
+function validSession(value?: string) {
+  if (!value) return false;
+  const [payload, signature] = value.split(".");
+  if (!payload || !signature) return false;
+  const age = Date.now() - Number(payload);
+  if (!Number.isFinite(age) || age < 0 || age > 8 * 60 * 60 * 1000) return false;
+  const expected = sign(payload);
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+}
+
+export async function isWallAdmin() {
+  return validSession((await cookies()).get(COOKIE)?.value);
+}
+
+export async function setWallAdminSession() {
+  (await cookies()).set(COOKIE, makeSession(), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/admin",
+    maxAge: 8 * 60 * 60,
+  });
+}
+
+export async function clearWallAdminSession() {
+  (await cookies()).delete(COOKIE);
+}
+
+export async function requireWallAdmin() {
+  if (!(await isWallAdmin())) throw new Error("UNAUTHENTICATED");
 }
 
 export async function listAdminContent(type: WallCollection): Promise<WallRecord[]> {
@@ -33,7 +68,6 @@ export async function saveAdminContent(type: WallCollection, id: string | undefi
   const ref = id ? wallAdminDb.collection(type).doc(id) : wallAdminDb.collection(type).doc();
   const now = new Date();
   await ref.set({ ...input, updatedAt: now, ...(id ? {} : { createdAt: now }) }, { merge: true });
-  return ref.id;
 }
 
 export async function deleteAdminContent(type: WallCollection, id: string) {
