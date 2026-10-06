@@ -1,8 +1,8 @@
-const CACHE_VERSION = "the-wall-shell-v2";
+const CACHE_VERSION = "the-wall-shell-v3";
 const SHELL_CACHE = CACHE_VERSION;
 const STATIC_LIMIT = 100;
 const PUBLIC_PAGE_LIMIT = 12;
-const APP_SHELL = ["/", "/offline", "/icon.svg"];
+const APP_SHELL = ["/", "/offline", "/the-wall-icon.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(precacheShell());
