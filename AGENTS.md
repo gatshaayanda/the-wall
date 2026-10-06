@@ -440,19 +440,37 @@ Every meaningful checkpoint should have:
 
 ## Current conversion status
 
-The repository was created by pushing the BOEMO technical foundation into gatshaayanda/the-wall.
+The repository was created by pushing the BOEMO technical foundation into gatshaayanda/the-wall. The foundation checkpoint remains the technical starting point, but the public product is now being actively reclaimed for THE WALL.
 
-The initial remote checkpoint was deliberately kept as the known BOEMO foundation before product conversion.
+Current phase: FOUNDATION CONVERSION → INFORMATION ARCHITECTURE.
 
-Current phase: FOUNDATION CONVERSION.
+Completed in the current conversion checkpoint:
+1. THE WALL public identity, homepage and metadata established.
+2. PWA/service-worker copy, install UI and app icon moved to THE WALL branding.
+3. Public routes established for Events, Discover, Market, Opportunities, My Wall and Become a Vendor.
+4. /admin reclaimed as a Wall Control shell instead of a BOEMO kitchen console.
+5. Legacy /order, /account and /orders/[id] routes no longer expose BOEMO workflows.
+6. Offline route no longer exposes BOEMO copy or order claims.
+7. Firestore and Storage rules in Git are back to deny-all while the THE WALL domain model is designed.
+8. Install prompt now uses THE WALL styling, suppresses itself after dismissal, and does not appear when the app is already installed.
+
+Important current reality:
+- The new public pages are honest shell states; they do not invent live events, businesses, products, prices or opportunities.
+- Firebase domain collections/security rules are not yet implemented for THE WALL.
+- The old BOEMO implementation still exists in quarantined source files and legacy server helpers. It is not product truth and must not be reconnected accidentally.
+- Vercel does not currently have a linked THE WALL project. Project creation through the available Vercel integration returned HTTP 403 permission denied, so no deployment is claimed.
+- A full local TypeScript/lint/build verification has not been performed in this checkpoint because the currently available working environment does not contain the user's local checkout.
 
 Immediate priority:
-1. establish THE WALL identity and operating contract
-2. remove BOEMO from the public product shell
-3. preserve useful technical infrastructure
-4. establish THE WALL information architecture
-5. build the public Wall shell before deep CRUD
-6. build the domain model and Wall Control around the relationships above
+1. finish the public information architecture and domain primitives
+2. replace/quarantine remaining BOEMO source paths as each is inspected
+3. design THE WALL Firestore entities and access patterns
+4. write and test THE WALL security rules before enabling public data
+5. build Wall Control around publishing and relationships
+6. connect Events ↔ Vendors ↔ Businesses ↔ Products and Opportunities ↔ Applications ↔ Participation
+7. implement My Wall and authenticated actions
+8. establish Vercel project/deployment with the user's account permissions
+9. verify the actual deployed product before calling the checkpoint complete
 
 Do not stop at a renamed BOEMO website.
 
