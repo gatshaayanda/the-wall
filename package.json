@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "seed:wall-demo": "node scripts/seed-wall-demo.mjs",
+    "set:wall-admin": "node scripts/set-wall-admin.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
