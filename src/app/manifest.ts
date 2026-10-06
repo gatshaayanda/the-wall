@@ -21,7 +21,7 @@ export default function manifest(): MetadataRoute.Manifest {
       { name: "My Wall", short_name: "My Wall", description: "Open your saved Wall activity", url: "/my-wall" }
     ],
     icons: [
-      { src: "/the-wall-icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any maskable" }
+      { src: "/the-wall-icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }
     ]
   };
 }
