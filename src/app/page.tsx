@@ -1,52 +1,82 @@
-"use client";
-import Image from "next/image";
 import Link from "next/link";
-import {useEffect,useMemo,useState} from "react";
 
-import {getBusinessSettings,getMenuItems,readCachedMenuItems,type MenuItem,type BusinessSettings} from "@/lib/firebase/data";
-const GABORONE_TIME_ZONE="Africa/Gaborone";
-function gaboroneParts(date=new Date()){const parts=new Intl.DateTimeFormat("en-US",{timeZone:GABORONE_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).formatToParts(date);return {year:Number(parts.find(p=>p.type==="year")?.value??0),month:Number(parts.find(p=>p.type==="month")?.value??0),day:Number(parts.find(p=>p.type==="day")?.value??0),hour:Number(parts.find(p=>p.type==="hour")?.value??0),minute:Number(parts.find(p=>p.type==="minute")?.value??0),second:Number(parts.find(p=>p.type==="second")?.value??0)}}
-function gaboroneWeekday(date=new Date()){return new Intl.DateTimeFormat("en-US",{weekday:"long",timeZone:GABORONE_TIME_ZONE}).format(date)}
-function gaboroneClockMs(date=new Date()){const parts=gaboroneParts(date);return Date.UTC(parts.year,parts.month-1,parts.day,parts.hour,parts.minute,parts.second)}
-function futureGaboroneDate(offset:number){const parts=gaboroneParts();const candidate=new Date(Date.UTC(parts.year,parts.month-1,parts.day+offset,12,0,0));const candidateParts={year:candidate.getUTCFullYear(),month:candidate.getUTCMonth()+1,day:candidate.getUTCDate()};return {weekday:gaboroneWeekday(candidate),dateKey:`${candidateParts.year}-${String(candidateParts.month).padStart(2,"0")}-${String(candidateParts.day).padStart(2,"0")}`,midnightClockMs:Date.UTC(candidateParts.year,candidateParts.month-1,candidateParts.day,0,0,0)}}
-const heroImage="/boemo-assets/WhatsApp Image 2026-09-23 at 14.12.46.jpeg";
-const serviceImage="/boemo-assets/WhatsApp Image 2026-09-23 at 14.16.14.jpeg";
+const pillars = [
+  { label: "EXPERIENCE", title: "What's happening", body: "Events, gatherings and things worth coming to.", href: "/events" },
+  { label: "DISCOVER", title: "Who's here", body: "Businesses, food, services and people building around The Wall.", href: "/discover" },
+  { label: "MARKET", title: "What you can get", body: "Local products and services — view, enquire, order, collect.", href: "/market" },
+  { label: "OPPORTUNITIES", title: "What you can be part of", body: "Ways to sell, partner, participate and grow with The Wall.", href: "/opportunities" },
+];
 
-export default function Home(){
- const today=gaboroneWeekday();
- const[firebaseMenu,setFirebaseMenu]=useState<MenuItem[]>([]),[settings,setSettings]=useState<BusinessSettings|null>(null),[menuUnavailable,setMenuUnavailable]=useState(false);
- const [countdownNow,setCountdownNow]=useState(gaboroneClockMs());
- useEffect(()=>{const timer=window.setInterval(()=>setCountdownNow(gaboroneClockMs()),1000);return()=>window.clearInterval(timer)},[]);
- const nextPublished=useMemo(()=>{for(let offset=1;offset<=7;offset++){const candidate=futureGaboroneDate(offset);if(firebaseMenu.some(item=>item.available&&item.section==="daily"&&(item.days??[]).includes(candidate.weekday)))return candidate;}return null},[firebaseMenu]);
- const countdownMs=Math.max(0,(nextPublished?.midnightClockMs??0)-countdownNow);
- const countdownDays=Math.floor(countdownMs/86400000);
- const countdownHours=Math.floor((countdownMs%86400000)/3600000);
- const countdownMinutes=Math.floor((countdownMs%3600000)/60000);
- const countdownSeconds=Math.floor((countdownMs%60000)/1000);
- useEffect(()=>{void Promise.all([getMenuItems(),getBusinessSettings()]).then(([items,currentSettings])=>{setFirebaseMenu(items);setSettings(currentSettings);setMenuUnavailable(false)}).catch(()=>{const cached=readCachedMenuItems();if(cached.length){setFirebaseMenu(cached);setMenuUnavailable(false)}else setMenuUnavailable(true)})},[]);
- const legacyServiceItems=firebaseMenu.filter(item=>item.available&&item.section==="deal"&&item.category.trim().toLowerCase()==="deal"&&!item.id.startsWith("deal-"));
- const dynamicToday=[...firebaseMenu.filter(item=>item.available&&item.section==="daily"&&(item.days??[]).includes(today)),...legacyServiceItems];
- const weeklyMenu:Record<string,string>={Monday:"Ke Starch, Beetroot, Pumpkin, Chicken + Stew, Soup, Drink of Choice",Tuesday:"Samp & Stew",Wednesday:"Pap, Braai, Chicken, Morogo",Thursday:"Dumplings & Chicken",Friday:"Hot Dog & Fries"};
- const todayMenu=dynamicToday.length?dynamicToday:[];
- const weeklyFallback=weeklyMenu[today];
- const publicDeals=firebaseMenu.filter(item=>item.available&&(item.section==="deal"||(!item.section&&item.category.toLowerCase()==="deal")||item.friendPrice!==undefined));
- const deals=publicDeals;
+const actions = [
+  ["Explore events", "/events"],
+  ["Discover businesses", "/discover"],
+  ["Visit the market", "/market"],
+  ["My Wall", "/my-wall"],
+];
 
- return <main className="boemoSite">
-  <div className="topbar"><div className="container topbarInner"><span>BOEMO JOOS DEALER</span><strong>Good Food. Great Taste. Every Day!</strong><span>76425849 · 76769834</span></div></div>
-  <nav className="nav"><div className="container navInner"><Link href="/" className="logo"><span className="logoMark">B</span><span className="logoWord">BOEMO</span></Link><div className="navLinks"><a href="#today">Today</a><a href="#deals">Deals</a><a href="#where">Where we are</a></div><div className="navActions"><Link href="/account" className="button buttonLight">My BOEMO</Link><Link href="/order" className="button buttonPrimary">Order ahead</Link></div></div></nav>
-  <section className="hero"><div className="container heroGrid"><div className="heroCopy"><span className="eyebrow">BOEMO JOOS DEALER</span><h1>Good food.<br/><em>Big flavour.</em></h1><p>Fresh local comfort food, street-food favourites and student-friendly deals. See what&apos;s cooking and order ahead before you leave class.</p><div className="actions"><Link href="/order" className="button buttonPrimary">Order food</Link><Link href="/account" className="button buttonLight">My BOEMO</Link><a href="#today" className="button buttonLight">See today&apos;s food</a></div><div className="heroPill"><span>📍</span><div><strong>Mobile kitchen</strong><small>Serving around BAC and nearby student areas</small></div></div></div><div className="heroVisual"><Image src={heroImage} alt="BOEMO food being prepared and served" fill priority sizes="(max-width: 800px) 100vw, 48vw"/></div></div></section>
+export default function Home() {
+  return (
+    <main className="wallSite">
+      <header className="wallNav">
+        <div className="wallContainer wallNavInner">
+          <Link href="/" className="wallBrand" aria-label="The Wall home">
+            <span className="wallBrandMark">W</span><span>THE WALL</span>
+          </Link>
+          <nav className="wallNavLinks" aria-label="Primary navigation">
+            <Link href="/events">Events</Link><Link href="/discover">Discover</Link><Link href="/market">Market</Link><Link href="/opportunities">Opportunities</Link>
+          </nav>
+          <Link href="/my-wall" className="wallNavCta">My Wall</Link>
+        </div>
+      </header>
 
-  <section id="today" className="section"><div className="container"><div className="sectionHead"><div><span className="kicker">Today&apos;s food · {today}</span><h2>What&apos;s cooking?</h2></div><Link href="/order" className="textLink">Order ahead →</Link></div>
-   {todayMenu.length?<><div className={"menuStrip day-"+today.toLowerCase()}>{todayMenu.map(item=><article className="menuCard" key={item.id}>{item.imageUrl?<Image src={item.imageUrl} alt="" width={500} height={300} className="menuCardImage"/>:<span>🍽️</span>}<div><strong>{item.name}</strong><small>{item.description}</small><b>P{item.price.toFixed(item.price%1?2:0)}</b></div></article>)}</div>{nextPublished&&<div className="nextFoodCard"><span className="kicker">Next food day · {nextPublished.weekday}</span><strong>Plan ahead.</strong><p>Planning ahead? Pre-order for {nextPublished.weekday} now and get onto the kitchen radar before the day starts.</p><Link className="button buttonPrimary" href={"/order?date="+nextPublished.dateKey}>Order ahead for {nextPublished.weekday} →</Link></div>}</>:<div className="emptyState"><strong>{menuUnavailable?"BOEMO\u0027s menu is temporarily unavailable.":"No Today\u0027s Food is published yet."}</strong>{nextPublished?<div className="nextFoodCard"><span className="kicker">Next food day · {nextPublished.weekday}</span><strong className="countdown">{countdownDays>0?countdownDays+"d ":""}{String(countdownHours).padStart(2,"0")}:{String(countdownMinutes).padStart(2,"0")}:{String(countdownSeconds).padStart(2,"0")}</strong><p>Planning ahead? Pre-order for {nextPublished.weekday} now and get onto the kitchen radar before the day starts.</p><Link className="button buttonPrimary" href={"/order?date="+nextPublished.dateKey}>Order ahead for {nextPublished.weekday} →</Link></div>:<p>There is no future daily food published yet. The kitchen can publish the next food day from the admin. {weeklyFallback?"Weekly guide: "+weeklyFallback+". ":""}Call BOEMO on 76425849 / 76769834 if you need help.</p>}<div className="contactRow"><a className="button buttonDark" href="tel:76425849">Call 76425849</a><a className="button buttonLight" href="tel:76769834">Call 76769834</a></div></div>}
-   <p className="truthNote">{todayMenu.length?"Today&apos;s Food is published and priced from the BOEMO kitchen admin.":weeklyFallback?"The weekly guide above is informational only. Prices and orderable availability come from the BOEMO kitchen admin.":"Availability changes during service. Call BOEMO if you need an item that is not published."}</p>
-  </div></section>
+      <section className="wallHero">
+        <div className="wallContainer wallHeroGrid">
+          <div className="wallHeroCopy">
+            <p className="wallEyebrow">GREAT WALL · MOLEPOLOLE</p>
+            <h1>COME TO<br /><em>THE WALL.</em></h1>
+            <p className="wallLead">A living destination for experiences, businesses, food, events and opportunities. Find something happening. Find someone building. Find your reason to come.</p>
+            <div className="wallActions">
+              {actions.map(([label, href], index) => <Link key={href} href={href} className={index === 0 ? "wallButton wallButtonPrimary" : "wallButton wallButtonSecondary"}>{label} →</Link>)}
+            </div>
+          </div>
+          <div className="wallHeroPanel">
+            <span className="wallPanelLabel">THE WALL</span>
+            <strong>More than a venue.</strong>
+            <p>One place where an event can lead you to a vendor, a vendor to a business, a business to a product, and an opportunity to a new participant.</p>
+            <div className="wallSignal"><span>01</span><span>EXPERIENCE</span><span>02</span><span>DISCOVER</span><span>03</span><span>PARTICIPATE</span></div>
+          </div>
+        </div>
+      </section>
 
-  <section id="deals" className="section dealsSection"><div className="container"><div className="sectionHead"><div><span className="kicker">Deals · prices</span><h2>Bring a friend. Save.</h2></div><Link href="/order" className="textLink">Start an order →</Link></div><div className="dealGrid">{deals.length?deals.map(deal=><article className="dealCard" key={deal.id}>{deal.imageUrl&&<Image src={deal.imageUrl} alt="" width={180} height={120} className="dealImage"/>}<div><strong>{deal.name}</strong>{deal.description&&<small>{deal.description}</small>}{deal.friendPrice!==undefined&&<div className="dealFriendPrice"><span>Bring a Friend</span><strong>P{deal.friendPrice.toFixed(deal.friendPrice%1?2:0)}</strong><small>per person when you order 2+</small></div>}</div><div className="dealPrice"><span>Regular</span><b>P{deal.price.toFixed(deal.price%1?2:0)}</b></div></article>):<div className="emptyState"><strong>No deals are published right now.</strong><p>Call BOEMO on 76425849 / 76769834 to ask what is available.</p></div>}</div><p className="truthNote">Prices and availability are controlled from the BOEMO kitchen admin.</p></div></section>
+      <section className="wallIntro">
+        <div className="wallContainer wallIntroGrid">
+          <div><p className="wallEyebrow">WHAT IS THE WALL?</p><h2>A place you can keep coming back to.</h2></div>
+          <p>The Wall is being built as a digital front door to the Great Wall experience — not just a calendar and not just a directory. The useful part is the connection between what is happening, who is involved, what is available and what you can do next.</p>
+        </div>
+      </section>
 
-  <section className="section storySection"><div className="container storyGrid"><div className="storyImage"><Image src={serviceImage} alt="BOEMO takeaway meal with burger and chips" width={1000} height={1000} sizes="(max-width: 800px) 100vw, 45vw"/></div><div><span className="kicker">Between classes?</span><h2>Can&apos;t leave class?</h2><p>Choose your food, tell us when you want it and choose pickup or delivery. We&apos;ll have your order details ready for the kitchen.</p><Link href="/order" className="button buttonPrimary">Plan my order</Link></div></div></section>
+      <section className="wallPillars">
+        <div className="wallContainer">
+          <div className="wallSectionHeading"><div><p className="wallEyebrow">THE ECOSYSTEM</p><h2>There is always another door.</h2></div><p>Start anywhere. The Wall should help you find the next thing.</p></div>
+          <div className="wallPillarGrid">
+            {pillars.map((pillar, index) => <Link href={pillar.href} key={pillar.label} className="wallPillar"><span>0{index + 1}</span><small>{pillar.label}</small><h3>{pillar.title}</h3><p>{pillar.body}</p><b>Explore →</b></Link>)}
+          </div>
+        </div>
+      </section>
 
-  <section id="where" className="section locationSection"><div className="container locationGrid"><div><span className="kicker">Mobile kitchen</span><h2>Find BOEMO today.</h2><p>BOEMO is a mobile kitchen, so the operating location can change.</p><div className="contactRow"><a className="button buttonDark" href="tel:76425849">Call 76425849</a><a className="button buttonLight" href="tel:76769834">Call 76769834</a></div></div><div className="locationCard"><span>📍</span><strong>Today&apos;s location</strong><p>{settings?.location||"Location not published yet."}</p>{settings?.hours&&<small>Serving hours: {settings.hours}</small>}{settings?.locationNote&&<small>{settings.locationNote}</small>}{!settings?.location&&<small>No fixed restaurant address is assumed.</small>}</div></div></section>
-  <footer className="footer"><div className="container footerInner"><div><strong>BOEMO Joos Dealer</strong><span>We Cook. You Enjoy!</span></div><div className="footerActions"><Link href="/admin" className="footerUtilityLink">Kitchen access <span aria-hidden="true">↗</span></Link></div></div></footer>
- </main>;
+      <section className="wallReturn">
+        <div className="wallContainer wallReturnGrid">
+          <div><p className="wallEyebrow">YOUR WALL</p><h2>Keep the things that matter to you.</h2><p>Bookings, saved experiences, followed businesses, offers and your history — together in My Wall.</p></div>
+          <Link href="/my-wall" className="wallButton wallButtonPrimary">Open My Wall →</Link>
+        </div>
+      </section>
+
+      <footer className="wallFooter">
+        <div className="wallContainer wallFooterInner">
+          <div><strong>THE WALL</strong><span>Great Wall · Molepolole</span></div>
+          <div className="wallFooterLinks"><Link href="/events">Events</Link><Link href="/discover">Discover</Link><Link href="/market">Market</Link><Link href="/become-a-vendor">Become a vendor</Link><Link href="/admin">Wall Control</Link></div>
+        </div>
+      </footer>
+    </main>
+  );
 }

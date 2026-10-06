@@ -1,4 +1,26 @@
 import type { MetadataRoute } from "next";
+
 export default function manifest(): MetadataRoute.Manifest {
- return {name:"BOEMO Joos Food Deals",short_name:"BOEMO",description:"Good Food. Great Taste. Every Day!",start_url:"/",display:"standalone",background_color:"#0B0B0C",theme_color:"#FFC800",orientation:"portrait-primary",lang:"en",categories:["food","shopping","business"],shortcuts:[{name:"Kitchen",short_name:"Kitchen",description:"Open BOEMO Kitchen Control",url:"/admin",icons:[{src:"/icon.svg",sizes:"any",type:"image/svg+xml"}]}],icons:[{src:"/icon.svg",sizes:"any",type:"image/svg+xml",purpose:"any"},{src:"/icon.svg",sizes:"any",type:"image/svg+xml",purpose:"maskable"}]};
+  return {
+    name: "THE WALL",
+    short_name: "THE WALL",
+    description: "Experiences, businesses, products and opportunities at Great Wall.",
+    start_url: "/",
+    display: "standalone",
+    background_color: "#111111",
+    theme_color: "#111111",
+    orientation: "portrait-primary",
+    lang: "en",
+    categories: ["events", "business", "shopping", "travel"],
+    shortcuts: [
+      { name: "Events", short_name: "Events", description: "Explore what is happening at The Wall", url: "/events" },
+      { name: "Discover", short_name: "Discover", description: "Find businesses and services", url: "/discover" },
+      { name: "Market", short_name: "Market", description: "Browse products and services", url: "/market" },
+      { name: "My Wall", short_name: "My Wall", description: "Open your saved Wall activity", url: "/my-wall" }
+    ],
+    icons: [
+      { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
+      { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "maskable" }
+    ]
+  };
 }
