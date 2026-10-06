@@ -34,7 +34,9 @@ function validSession(value?: string) {
   const age = Date.now() - Number(payload);
   if (!Number.isFinite(age) || age < 0 || age > 8 * 60 * 60 * 1000) return false;
   const expected = sign(payload);
-  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+  const actual = Buffer.from(signature);
+  const target = Buffer.from(expected);
+  return actual.length === target.length && crypto.timingSafeEqual(actual, target);
 }
 
 export async function isWallAdmin() {
