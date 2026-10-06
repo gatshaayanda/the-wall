@@ -453,12 +453,14 @@ Completed in the current conversion checkpoint:
 6. Offline route no longer exposes BOEMO copy or order claims.
 7. Firestore and Storage rules in Git are back to deny-all while the THE WALL domain model is designed.
 8. Install prompt now uses THE WALL styling, suppresses itself after dismissal, and does not appear when the app is already installed.
+9. PWA cache identity was bumped from `the-wall-shell-v1` to `v2`, and the app icon now has a unique `/the-wall-icon.svg` path so an inherited BOEMO icon cannot remain silently cached under the old `/icon.svg` URL.
 
 Important current reality:
 - The new public pages are honest shell states; they do not invent live events, businesses, products, prices or opportunities.
 - Firebase domain collections/security rules are not yet implemented for THE WALL.
 - The old BOEMO implementation still exists in quarantined source files and legacy server helpers. It is not product truth and must not be reconnected accidentally.
 - Vercel does not currently have a linked THE WALL project. Project creation through the available Vercel integration returned HTTP 403 permission denied, so no deployment is claimed.
+- If a browser is still showing BOEMO while GitHub main contains THE WALL routes, treat that as stale deployment/service-worker/PWA state first. Do not change correct source styling to compensate for an old deployment.
 - A full local TypeScript/lint/build verification has not been performed in this checkpoint because the currently available working environment does not contain the user's local checkout.
 
 Immediate priority:
