@@ -537,7 +537,23 @@ Demo records are fictional and visibly marked as DEMO. They are not claims about
 - Before production content is opened directly to browser clients, replace the temporary server-only boundary with deliberate Firebase Auth/custom-claim rules and test the rules against the public/private access model.
 
 ### Accessibility / visual correction
-The shared secondary button style previously used light text on light public-page backgrounds because it was designed for the dark hero. The public-page override now uses ink text and an ink border on paper backgrounds. This keeps the reusable CTA readable and follows the WCAG contrast intent.
+Public-page actions must be readable on the light paper surfaces. Do not reuse the dark-hero secondary-button treatment on `/events`, `/discover`, `/market`, `/opportunities`, `/become-a-vendor` or `/my-wall`.
+
+For light public-page action groups:
+- secondary actions use an explicit ink background with white text, not light text on a light background
+- action labels must remain readable at normal mobile sizes and have enough padding/line-height to read as controls
+- hover/focus states must remain readable
+- do not rely on colour alone to communicate an action
+- keep normal text at a strong readable contrast; WCAG's current minimum for normal text is 4.5:1, with 3:1 permitted for large text
+
+The home hero may keep its intentionally dark presentation, but light-page controls must use the explicit light-page treatment above.
+
+### Demo content / operator preview contract
+The fictional seeded dataset is part of the current product-preview workflow. Keep enough published demo records across businesses, events, products and opportunities for the public information architecture to be exercised end-to-end.
+
+The seed source is `scripts/seed-wall-demo.mjs`. It is an idempotent/upsert-style preview seed: records are clearly marked `demo: true`, published for preview, and remain editable through Wall Control CRUD at `/admin`.
+
+Do not replace this preview layer with invented real Great Wall facts. Real content replaces demo records only when supplied/verified by the operator. The admin CRUD surface must continue to make it possible to create, edit, publish, archive and delete preview records while the domain model and security rules are being built.
 
 ### Current next step
 Use the populated shell to test the information architecture and relationships. Then replace the demo records with real operator-managed entities, add detail routes and relationship fields, and only then open the corresponding Firestore client permissions.

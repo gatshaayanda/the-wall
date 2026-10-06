@@ -1,6 +1,5 @@
 import "server-only";
 
-import { collection, getDocs, orderBy, query, where } from "firebase-admin/firestore";
 import { wallAdminDb } from "@/lib/firebase-admin";
 import { DEMO_CONTENT, type WallCollection, type WallRecord } from "@/lib/wall-demo";
 
@@ -21,7 +20,7 @@ function serialise(data: FirebaseFirestore.DocumentData, id: string): WallRecord
 
 export async function getPublishedContent(type: WallCollection): Promise<WallRecord[]> {
   try {
-    const snap = await getDocs(query(collection(wallAdminDb, type), where("status", "==", "published"), orderBy("title")));
+    const snap = await wallAdminDb.collection(type).where("status", "==", "published").orderBy("title").get();
     return snap.docs.map((doc) => serialise(doc.data(), doc.id));
   } catch {
     return DEMO_CONTENT[type];
