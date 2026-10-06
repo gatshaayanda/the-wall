@@ -75,3 +75,5 @@ START → INSPECT → BUILD → VERIFY → CHECKPOINT → CONTINUE/RECOVER
 Unexpected result = STOP → inspect reality → then act.
 
 GitHub is the source of truth. Read AGENTS.md before meaningful work.
+
+<!-- Vercel production trigger probe: 2026-10-06 -->
