@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: { type: "website", url: siteUrl, siteName: "THE WALL", title: "THE WALL", description: "Experiences, businesses, products and opportunities at Great Wall." },
   twitter: { card: "summary", title: "THE WALL", description: "Experiences, businesses, products and opportunities at Great Wall." },
   icons: { icon: "/the-wall-icon.svg", apple: "/the-wall-icon.svg" },
-  manifest: "/manifest.webmanifest?v=2",
+  manifest: "/manifest.webmanifest?v=3",
   appleWebApp: { capable: true, title: "THE WALL", statusBarStyle: "black-translucent" },
 };
 
