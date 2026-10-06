@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { WallEmpty, WallPage } from "@/components/wall-shell";
-import { WallContentGrid } from "@/components/wall-content-grid";
 import { COLLECTION_LABELS, type WallCollection } from "@/lib/wall-demo";
 import { isWallAdmin, listAdminContent } from "@/lib/wall-admin";
 import { loginWallAdmin, logoutWallAdmin, saveWallContent, deleteWallContent } from "./actions";
