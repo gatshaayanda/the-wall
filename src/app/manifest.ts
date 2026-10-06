@@ -2,11 +2,13 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
+    id: "/",
     name: "THE WALL",
     short_name: "THE WALL",
-    description: "Experiences, businesses, products and opportunities at Great Wall.",
+    description: "A digital home for experiences, businesses, products and opportunities at Great Wall.",
     start_url: "/",
     display: "standalone",
+    display_override: ["window-controls-overlay", "standalone"],
     background_color: "#111111",
     theme_color: "#111111",
     orientation: "portrait-primary",
