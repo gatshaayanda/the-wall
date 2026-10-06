@@ -1,4 +1,4 @@
-const CACHE_VERSION = "the-wall-shell-v1";
+const CACHE_VERSION = "the-wall-shell-v2";
 const SHELL_CACHE = CACHE_VERSION;
 const STATIC_LIMIT = 100;
 const PUBLIC_PAGE_LIMIT = 12;
