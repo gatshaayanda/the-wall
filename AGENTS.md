@@ -577,3 +577,25 @@ Wall Control must show the same baseline plus Firestore overrides so the operato
 All action controls on light public surfaces must have readable text/background contrast. This includes buttons and card links for Become a vendor, Visit Market, Discover, Events, Opportunities, Wall Control and similar actions.
 
 Do not use the dark-hero secondary treatment on paper/white surfaces. Light-surface CTAs must use a solid ink or otherwise demonstrably high-contrast background with white text, sufficient padding and readable line height. Card action links are controls too and must receive the same treatment.
+
+
+## Wall Control usability checkpoint — 2026-10-07
+
+The operator MVP now follows explicit usability rules derived from current UX/accessibility guidance:
+- Wall Control shows one collection at a time instead of rendering every collection and every form simultaneously. This is progressive disclosure and reduces scanning/decision load.
+- The active collection is visibly marked, so the operator can recognize where they are without remembering the URL/query state.
+- New records default to draft and non-demo. Publishing is an explicit decision; demo labeling is an explicit decision. This prevents a real record from being accidentally presented as fictional preview content or published prematurely.
+- Demo baseline records use Archive demo rather than Delete. Archiving creates a Firestore override that suppresses the code baseline, so the operator can actually hide a demo record instead of deleting an override and having the baseline reappear.
+- Wall Control visibly distinguishes Preview/read-only mode from a connected backend. A successful-looking form must never imply that Firestore was written when Firebase Admin is unavailable.
+- Successful saves return explicit feedback and revalidate the public routes.
+- Error states use plain-language, actionable messages rather than raw server errors.
+- Public and operator controls retain visible focus treatment and high-contrast text. WCAG 2.2 AA requires 4.5:1 contrast for normal text and visible keyboard focus is required.
+- These choices align with recognition over recall, visibility of system status, progressive disclosure, and error-recovery principles.
+
+## Firebase/Vercel backend checkpoint — 2026-10-07
+
+The current production deployment can build and serve the public demo baseline even when FIREBASE_ADMIN_KEY is malformed, but that fallback is deliberately read-only for operator persistence. The application now exposes the configuration state to Wall Control and disables database mutations until Firebase Admin is actually configured.
+
+The required production secret remains FIREBASE_ADMIN_KEY, containing a valid Firebase service-account JSON object for the THE WALL Firebase project. The value must be configured in Vercel Production and a new deployment must be created after changing it. Firebase service-account credentials are privileged server credentials and must never be committed to Git or exposed to the browser.
+
+This is intentionally a temporary prototype boundary. Firestore rules remain deny-by-default, and the later production operator model should migrate from the temporary Wall Control passphrase to Firebase Auth/custom claims plus deliberately tested security rules.
