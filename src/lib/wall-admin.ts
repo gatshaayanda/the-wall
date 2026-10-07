@@ -7,6 +7,7 @@ import { DEMO_CONTENT, type WallCollection, type WallRecord } from "@/lib/wall-d
 
 const COLLECTIONS = new Set<WallCollection>(["businesses", "events", "products", "opportunities"]);
 const COOKIE = "the-wall-admin-session";
+export const wallAdminPasswordConfigured = Boolean(process.env.WALL_ADMIN_PASSWORD);
 
 export function isWallCollection(value: string): value is WallCollection {
   return COLLECTIONS.has(value as WallCollection);
