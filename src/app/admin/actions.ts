@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { firebaseAdminConfigured } from "@/lib/firebase-admin";
 import { clearWallAdminSession, deleteAdminContent, isWallCollection, requireWallAdmin, saveAdminContent, setWallAdminSession } from "@/lib/wall-admin";
 
 export async function loginWallAdmin(formData: FormData) {
@@ -31,13 +32,19 @@ export async function saveWallContent(formData: FormData) {
     meta: String(formData.get("meta") ?? "").trim(),
   };
   if (!input.title || !input.summary) throw new Error("Title and summary are required.");
-  await saveAdminContent(type, id, input);
+  if (!firebaseAdminConfigured) redirect("/admin?type=" + type + "&error=firebase");
+  try {
+    await saveAdminContent(type, id, input);
+  } catch {
+    redirect("/admin?type=" + type + "&error=save");
+  }
   revalidatePath("/");
   revalidatePath("/events");
   revalidatePath("/discover");
   revalidatePath("/market");
   revalidatePath("/opportunities");
   revalidatePath("/admin");
+  redirect("/admin?type=" + type + "&saved=1");
 }
 
 export async function deleteWallContent(formData: FormData) {
@@ -45,11 +52,17 @@ export async function deleteWallContent(formData: FormData) {
   const type = String(formData.get("type") ?? "");
   const id = String(formData.get("id") ?? "");
   if (!isWallCollection(type) || !id) throw new Error("Content and id are required.");
-  await deleteAdminContent(type, id);
+  if (!firebaseAdminConfigured) redirect("/admin?type=" + type + "&error=firebase");
+  try {
+    await deleteAdminContent(type, id);
+  } catch {
+    redirect("/admin?type=" + type + "&error=delete");
+  }
   revalidatePath("/");
   revalidatePath("/events");
   revalidatePath("/discover");
   revalidatePath("/market");
   revalidatePath("/opportunities");
   revalidatePath("/admin");
+  redirect("/admin?type=" + type + "&saved=1");
 }
