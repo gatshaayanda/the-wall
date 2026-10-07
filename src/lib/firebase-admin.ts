@@ -59,4 +59,5 @@ const app = getApps()[0] ?? initializeApp(
 );
 
 export const wallAdminDb = getFirestore(app);
+export const firebaseAdminConfigured = Boolean(serviceAccount);
 export const wallAdminAuth = getAuth(app);
