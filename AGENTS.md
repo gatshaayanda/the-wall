@@ -599,3 +599,5 @@ The current production deployment can build and serve the public demo baseline e
 The required production secret remains FIREBASE_ADMIN_KEY, containing a valid Firebase service-account JSON object for the THE WALL Firebase project. The value must be configured in Vercel Production and a new deployment must be created after changing it. Firebase service-account credentials are privileged server credentials and must never be committed to Git or exposed to the browser.
 
 This is intentionally a temporary prototype boundary. Firestore rules remain deny-by-default, and the later production operator model should migrate from the temporary Wall Control passphrase to Firebase Auth/custom claims plus deliberately tested security rules.
+
+- The temporary Wall Control passphrase also requires WALL_ADMIN_PASSWORD in the Vercel Production environment. The UI must identify missing operator configuration rather than presenting a dead login control.
