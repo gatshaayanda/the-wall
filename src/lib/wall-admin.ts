@@ -79,5 +79,11 @@ export async function saveAdminContent(type: WallCollection, id: string | undefi
 }
 
 export async function deleteAdminContent(type: WallCollection, id: string) {
+  const demo = DEMO_CONTENT[type].find((item) => item.id === id);
+  if (demo) {
+    await wallAdminDb.collection(type).doc(id).set({ ...demo, status: "archived", updatedAt: new Date() }, { merge: true });
+    return "archived" as const;
+  }
   await wallAdminDb.collection(type).doc(id).delete();
+  return "deleted" as const;
 }
