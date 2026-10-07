@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { WallEmpty, WallPage } from "@/components/wall-shell";
 import { COLLECTION_LABELS, type WallCollection } from "@/lib/wall-demo";
 import { firebaseAdminConfigured } from "@/lib/firebase-admin";
-import { isWallAdmin, listAdminContent } from "@/lib/wall-admin";
+import { isWallAdmin, listAdminContent, wallAdminPasswordConfigured } from "@/lib/wall-admin";
 import { loginWallAdmin, logoutWallAdmin, saveWallContent, deleteWallContent } from "./actions";
 
 export const metadata: Metadata = { title: "Wall Control", description: "Operator workspace for The Wall.", robots: { index: false, follow: false } };
@@ -23,9 +23,10 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           <p className="wallEyebrow">OPERATOR ACCESS</p>
           <h2>Sign in to manage The Wall.</h2>
           <p>Use the Wall Control passphrase configured for this deployment. This is an operator boundary, not public visitor authentication.</p>
+          {!wallAdminPasswordConfigured && <div className="wallAdminStatus wallAdminStatusWarning" role="alert"><strong>Operator access is not configured.</strong><span>WALL_ADMIN_PASSWORD is missing from this deployment.</span></div>}
           <form className="wallAdminForm" action={loginWallAdmin}>
             <label>Passphrase<input name="password" type="password" autoComplete="current-password" required /></label>
-            <button className="wallButton wallButtonPrimary" type="submit">Open Wall Control</button>
+            <button className="wallButton wallButtonPrimary" type="submit" disabled={!wallAdminPasswordConfigured}>Open Wall Control</button>
           </form>
           {params.error === "1" && <p className="wallAdminMessage wallAdminError" role="alert">That passphrase was not accepted.</p>}
         </section>
