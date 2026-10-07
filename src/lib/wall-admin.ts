@@ -3,7 +3,7 @@ import "server-only";
 import crypto from "node:crypto";
 import { cookies } from "next/headers";
 import { wallAdminDb } from "@/lib/firebase-admin";
-import type { WallCollection, WallRecord } from "@/lib/wall-demo";
+import { DEMO_CONTENT, type WallCollection, type WallRecord } from "@/lib/wall-demo";
 
 const COLLECTIONS = new Set<WallCollection>(["businesses", "events", "products", "opportunities"]);
 const COOKIE = "the-wall-admin-session";
@@ -62,8 +62,14 @@ export async function requireWallAdmin() {
 }
 
 export async function listAdminContent(type: WallCollection): Promise<WallRecord[]> {
-  const snap = await wallAdminDb.collection(type).orderBy("title").get();
-  return snap.docs.map((doc) => ({ id: doc.id, ...(doc.data() as Omit<WallRecord, "id">) }));
+  const records = new Map(DEMO_CONTENT[type].map((item) => [item.id, item]));
+  try {
+    const snap = await wallAdminDb.collection(type).orderBy("title").get();
+    for (const doc of snap.docs) records.set(doc.id, { id: doc.id, ...(doc.data() as Omit<WallRecord, "id">) });
+  } catch {
+    // Demo baseline keeps Wall Control usable while Firebase is unavailable.
+  }
+  return [...records.values()].sort((a, b) => a.title.localeCompare(b.title));
 }
 
 export async function saveAdminContent(type: WallCollection, id: string | undefined, input: Omit<WallRecord, "id">) {

@@ -19,10 +19,16 @@ function serialise(data: FirebaseFirestore.DocumentData, id: string): WallRecord
 }
 
 export async function getPublishedContent(type: WallCollection): Promise<WallRecord[]> {
+  const baseline = new Map(DEMO_CONTENT[type].map((item) => [item.id, item]));
   try {
-    const snap = await wallAdminDb.collection(type).where("status", "==", "published").orderBy("title").get();
-    return snap.docs.map((doc) => serialise(doc.data(), doc.id));
+    const snap = await wallAdminDb.collection(type).orderBy("title").get();
+    for (const doc of snap.docs) {
+      const item = serialise(doc.data(), doc.id);
+      if (item.status === "published") baseline.set(item.id, item);
+      else baseline.delete(item.id);
+    }
   } catch {
-    return DEMO_CONTENT[type];
+    // Keep the labelled demo baseline available when Firebase is not configured.
   }
+  return [...baseline.values()].filter((item) => item.status === "published").sort((a, b) => a.title.localeCompare(b.title));
 }

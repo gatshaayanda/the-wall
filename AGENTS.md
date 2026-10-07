@@ -557,3 +557,23 @@ Do not replace this preview layer with invented real Great Wall facts. Real cont
 
 ### Current next step
 Use the populated shell to test the information architecture and relationships. Then replace the demo records with real operator-managed entities, add detail routes and relationship fields, and only then open the corresponding Firestore client permissions.
+
+
+## Catalogue preview rule — 2026-10-07
+The public catalogue and Wall Control must be visually populated during development. An empty Firestore collection must **not** cause the public page to say nothing is published when the repository's labelled demo baseline exists.
+
+The demo baseline in `src/lib/wall-demo.ts` is the preview catalogue:
+- it is fictional
+- every record is marked `demo: true`
+- public cards visibly say DEMO
+- it is not presented as a current Great Wall fact
+- Firestore records with the same ID override the demo baseline
+- Firestore draft/archived records suppress the corresponding demo baseline record
+- new operator-created records are added to the catalogue
+
+Wall Control must show the same baseline plus Firestore overrides so the operator can exercise create, edit, publish, archive and delete flows immediately. A delete of a demo-baseline record is represented by an archived Firestore override rather than pretending the source code baseline was deleted.
+
+## Public CTA readability rule — 2026-10-07
+All action controls on light public surfaces must have readable text/background contrast. This includes buttons and card links for Become a vendor, Visit Market, Discover, Events, Opportunities, Wall Control and similar actions.
+
+Do not use the dark-hero secondary treatment on paper/white surfaces. Light-surface CTAs must use a solid ink or otherwise demonstrably high-contrast background with white text, sufficient padding and readable line height. Card action links are controls too and must receive the same treatment.
